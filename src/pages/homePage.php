@@ -112,11 +112,12 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/conexao.php';
               foreach ($arquivos as $arquivo) {
                 $arquivo = trim($arquivo);
                 if ($arquivo) {
-                  // Caminho local para o arquivo DICOM
                   $caminho_local = "C:/xampp/htdocs/CBAITYHY/PacFront/src/images/{$row['pac_id']}/$arquivo";
-                  $caminho_local = str_replace('\\', '/', $caminho_local); // Garante barras corretas
-                  $caminho_weasis = "weasis://file/$caminho_local";
-                  $acoes .= "<a href=\"$caminho_weasis\" target=\"_blank\">$arquivo</a><br>";
+                  $caminho_local = str_replace('\\', '/', $caminho_local);
+                  // Codifica o caminho para uso em URL
+                  $caminho_weasis = "weasis://file/" . rawurlencode($caminho_local);
+                  $caminho_download = "../images/{$row['pac_id']}/" . rawurlencode($arquivo);
+                  $acoes .= "<a href=\"$caminho_weasis\">Abrir no Weasis</a> | <a href=\"$caminho_download\" download>Baixar</a><br>";
                 }
               }
 
