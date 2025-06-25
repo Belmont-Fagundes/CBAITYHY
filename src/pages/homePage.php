@@ -1,6 +1,7 @@
 <?php
-include_once $_SERVER['DOCUMENT_ROOT'] . '/conexao.php';
+include_once('conexao.php');
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -90,6 +91,13 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/conexao.php';
           $query = "SELECT * FROM exames ORDER BY data_estudo DESC";
           $result = $conexao->query($query);
 
+          while ($row = $result->fetch_assoc()) {
+            echo "<pre>";
+            print_r($row);
+            echo "</pre>";
+            break; // só para mostrar a primeira linha
+          }
+
           if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
               echo "<tr>";
@@ -106,27 +114,39 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/conexao.php';
               echo "<td>{$row['status']}</td>";
               echo "<td>{$row['sla']}</td>";
 
-              // Ações: links clicáveis com protocolo weasis
               $acoes = '';
               $arquivos = explode(',', $row['acoes']);
               foreach ($arquivos as $arquivo) {
                 $arquivo = trim($arquivo);
                 if ($arquivo) {
-                  $caminho_local = "C:/xampp/htdocs/CBAITYHY/PacFront/src/images/{$row['pac_id']}/$arquivo";
-                  $caminho_local = str_replace('\\', '/', $caminho_local);
-                  // Codifica o caminho para uso em URL
-                  $caminho_weasis = "weasis://file/" . rawurlencode($caminho_local);
-                  $caminho_download = "../images/{$row['pac_id']}/" . rawurlencode($arquivo);
-                  $acoes .= "<a href=\"$caminho_weasis\">Abrir no Weasis</a> | <a href=\"$caminho_download\" download>Baixar</a><br>";
+                  // Usa exatamente o valor do banco
+                  $url = rtrim($row['caminho'], '/') . '/' . rawurlencode($arquivo);
+
+                  // Apenas junta no formato correto
+                  $link_weasis = "weasis://" . $url;
+                  $link_download = $url;
+
+                  $acoes .= "<a href=\"$link_weasis\">Abrir no Weasis</a> | <a href=\"$link_download\" download>Baixar</a><br>";
                 }
               }
 
               echo "<td>$acoes</td>";
               echo "</tr>";
+
             }
+            echo "<pre>";
+            var_dump($row['caminho']);
+
+            // Mostrar os bytes em hexadecimal (para ver caracteres invisíveis)
+            echo "HEX: ";
+            for ($i = 0; $i < strlen($row['caminho']); $i++) {
+              echo sprintf("%02X ", ord($row['caminho'][$i]));
+            }
+            echo "</pre>";
           } else {
             echo "<tr><td colspan='13' style='text-align:center; padding: 1rem;'>Nenhum registro encontrado</td></tr>";
           }
+
           ?>
         </tbody>
       </table>
