@@ -115,18 +115,27 @@ include_once('conexao.php');
               echo "<td>{$row['sla']}</td>";
 
               $acoes = '';
+              $studyUID = $row['study_uid'] ?? null;
+
+              if ($studyUID) {
+                // Link para abrir no OHIF
+                $link_ohif = "http://SEU_IP:3000/viewer?studyInstanceUID=" . urlencode($studyUID);
+
+                // Link para manifest do Weasis
+                $manifest_url = "http://SEU_IP:8080/weasis-pacs-connector/manifest?studyUID=" . urlencode($studyUID);
+                $link_weasis = 'weasis://$dicom:get -w "' . $manifest_url . '"';
+
+                $acoes .= "<a href=\"$link_ohif\" target=\"_blank\">Abrir no OHIF</a> | ";
+                $acoes .= "<a href=\"$link_weasis\">Abrir no Weasis</a><br>";
+              }
+
+              // Downloads individuais (opcional)
               $arquivos = explode(',', $row['acoes']);
               foreach ($arquivos as $arquivo) {
                 $arquivo = trim($arquivo);
                 if ($arquivo) {
-                  // Usa exatamente o valor do banco
                   $url = rtrim($row['caminho'], '/') . '/' . rawurlencode($arquivo);
-
-                  // Apenas junta no formato correto
-                  $link_weasis = "weasis://" . $url;
-                  $link_download = $url;
-
-                  $acoes .= "<a href=\"$link_weasis\">Abrir no Weasis</a> | <a href=\"$link_download\" download>Baixar</a><br>";
+                  $acoes .= "<a href=\"$url\" download>Baixar " . htmlspecialchars($arquivo) . "</a><br>";
                 }
               }
 
