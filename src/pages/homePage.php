@@ -140,7 +140,9 @@ include_once('conexao.php');
             }
           } else {
             echo "<tr><td colspan='13'>Nenhum exame encontrado.</td></tr>";
+            echo "<tr><td colspan='13'>Nenhum exame encontrado.</td></tr>";
           }
+          ?>
           ?>
 
           ?>
