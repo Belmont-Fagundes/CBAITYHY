@@ -55,8 +55,7 @@ $usuario_logado = $_SESSION['usuario'];
         <h2 class="text-2xl font-bold mb-4">Worklist</h2>
 
         <!-- SEARCH BOX -->
-        <div class="bg-white rounded-lg shadow p-4 mb-6 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-3">
-            <!-- <input id="pacId" type="text" placeholder="Pac. ID" class="border p-2 rounded" /> -->
+        <div class="search-box bg-white rounded-lg shadow p-4 mb-6 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-3">
             <input id="unidade" type="text" placeholder="Pesquise por unidades" class="border p-2 rounded" />
             <input id="nomePaciente" type="text" placeholder="Nome do Paciente" class="border p-2 rounded" />
             <input id="modalidade" type="text" placeholder="Pesquise por modalidades" class="border p-2 rounded" />
@@ -64,16 +63,16 @@ $usuario_logado = $_SESSION['usuario'];
             <input id="dataFim" type="date" class="border p-2 rounded" />
             <input id="prioridade" type="text" placeholder="Pesquise por prioridade" class="border p-2 rounded" />
             <select id="filtro" class="border p-2 rounded">
-                <option>Filtro</option>
+                <option value="">Filtro</option>
             </select>
             <select id="status" class="border p-2 rounded">
-                <option>Status</option>
+                <option value="">Status</option>
             </select>
             <input id="nomeExame" type="text" placeholder="Nome do exame" class="border p-2 rounded" />
 
             <div class="col-span-1 md:col-span-2 lg:col-span-1 flex gap-2">
-                <button onclick="filtrar()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded">Filtrar</button>
-                <button onclick="limparFiltros()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">Limpar</button>
+                <button onclick="filtrar()" type="button" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded">Filtrar</button>
+                <button onclick="limparFiltros()" type="button" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">Limpar</button>
             </div>
         </div>
 
@@ -81,84 +80,71 @@ $usuario_logado = $_SESSION['usuario'];
         <div class="bg-white rounded-lg shadow p-4">
             <div class="flex justify-between mb-4">
                 <button class="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">Exibir Colunas ▾</button>
-                <div class="flex gap-2">
+                <div class="flex gap-2 text-center">
                     <button class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">Adicionar Exame</button>
                     <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">Enviar p/ Horos</button>
                     <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Excluir Exames</button>
                 </div>
             </div>
 
-            <table class="w-full text-sm border-collapse">
-                <thead>
-                    <tr class="bg-indigo-100">
-                        <th class="border p-2"></th>
-                        <th class="border p-2">UNIDADE</th>
-                        <th class="border p-2">PACIENTE</th>
-                        <th class="border p-2">PAC. ID</th>
-                        <th class="border p-2">IDADE</th>
-                        <th class="border p-2">SEXO</th>
-                        <th class="border p-2">MOD.</th>
-                        <th class="border p-2">EXAME</th>
-                        <th class="border p-2">DT. ESTUDO</th>
-                        <th class="border p-2">MÉDICO</th>
-                        <th class="border p-2">STATUS</th>
-                        <th class="border p-2">SLA</th>
-                        <th class="border p-2">AÇÕES</th>
+            <table class="w-full text-center border-collapse">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="border p-2 text-center">Selecionar</th>
+                        <th class="border p-2 text-center">Unidade</th>
+                        <th class="border p-2 text-center">Paciente</th>
+                        <th class="border p-2 text-center">Pac. ID</th>
+                        <th class="border p-2 text-center">Idade</th>
+                        <th class="border p-2 text-center">Sexo</th>
+                        <th class="border p-2 text-center">Modalidade</th>
+                        <th class="border p-2 text-center">Exame</th>
+                        <th class="border p-2 text-center">Data Estudo</th>
+                        <th class="border p-2 text-center">Médico</th>
+                        <th class="border p-2 text-center">Status</th>
+                        <th class="border p-2 text-center">SLA</th>
+                        <th class="border p-2 text-center">Ações</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaResultados">
-                    <?php
-                    $query = "SELECT * FROM exames ORDER BY data_estudo DESC";
-                    $result = $conexao->query($query);
-
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr class='hover:bg-gray-50'>";
-                            echo "<td class='border p-2'><input type='checkbox'></td>";
-                            echo "<td class='border p-2'>{$row['unidade']}</td>";
-                            echo "<td class='border p-2'>{$row['paciente']}</td>";
-                            echo "<td class='border p-2'>{$row['pac_id']}</td>";
-                            echo "<td class='border p-2'>{$row['idade']}</td>";
-                            echo "<td class='border p-2'>{$row['sexo']}</td>";
-                            echo "<td class='border p-2'>{$row['modalidade']}</td>";
-                            echo "<td class='border p-2'>{$row['exame']}</td>";
-                            echo "<td class='border p-2'>{$row['data_estudo']}</td>";
-                            echo "<td class='border p-2'>{$row['medico']}</td>";
-                            echo "<td class='border p-2'>{$row['status']}</td>";
-                            echo "<td class='border p-2'>{$row['sla']}</td>";
-
-                            $acoes = '';
-                            $arquivos = explode(',', $row['acoes']);
-                            foreach ($arquivos as $arquivo) {
-                                $arquivo = trim($arquivo);
-                                if ($arquivo) {
-                                    $url = rtrim($row['caminho'], '/') . '/' . rawurlencode($arquivo);
-                                    $link_weasis = "weasis://" . $url;
-                                    $link_download = $url;
-                                    $acoes .= "<a class='text-indigo-500 hover:underline' href=\"$link_weasis\">Abrir no Weasis</a> | ";
-                                    $acoes .= "<a class='text-green-500 hover:underline' href=\"$link_download\" download>Baixar</a><br>";
-                                }
-                            }
-
-                            echo "<td class='border p-2'>$acoes</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='13' class='text-center p-4'>Nenhum registro encontrado</td></tr>";
-                    }
-                    ?>
+                    <tr>
+                        <td colspan="13" class="text-center p-4 text-gray-500">Use os filtros acima para pesquisar.</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
     </main>
 
-    <!-- FOOTER -->
-    <!-- <footer class="bg-gray-800 text-gray-300 text-center py-4 mt-6 text-sm">
-        COPYRIGHT © 2025 <a href="#" class="text-indigo-400 hover:underline">CBAITYHY</a>, Todos os direitos reservados<br>
-        
-    </footer> -->
+    <script>
+    function filtrar() {
+        const dados = new URLSearchParams({
+            unidade: document.getElementById("unidade").value,
+            paciente: document.getElementById("nomePaciente").value,
+            modalidade: document.getElementById("modalidade").value,
+            dataInicio: document.getElementById("dataInicio").value,
+            dataFim: document.getElementById("dataFim").value,
+            prioridade: document.getElementById("prioridade").value,
+            filtro: document.getElementById("filtro").value,
+            status: document.getElementById("status").value,
+            nomeExame: document.getElementById("nomeExame").value
+        });
 
-    <script src="../Js/homePage.js"></script>
+        fetch("buscar.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: dados.toString()
+        })
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("tabelaResultados").innerHTML = data;
+        })
+        .catch(err => console.error("Erro:", err));
+    }
+
+    function limparFiltros() {
+        document.querySelectorAll(".search-box input, .search-box select").forEach(el => el.value = "");
+        document.getElementById("tabelaResultados").innerHTML =
+            "<tr><td colspan='13' class='text-center p-4 text-gray-500'>Use os filtros acima para pesquisar.</td></tr>";
+    }
+    </script>
 </body>
-
 </html>

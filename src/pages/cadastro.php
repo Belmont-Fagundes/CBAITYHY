@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'] ?? '';
     $senha = $_POST['senha'] ?? '';
     $confirmar = $_POST['confirmar'] ?? '';
+    $cargo = $_POST['cargo'] ?? ''; // <-- Adicionado
 
     if ($senha !== $confirmar) {
         $mensagem = "<p class='text-red-500 font-medium'>As senhas não coincidem!</p>";
@@ -18,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->num_rows > 0) {
             $mensagem = "<p class='text-red-500 font-medium'>Já existe uma conta com este email!</p>";
         } else {
-            $stmt = $conexao->prepare("INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $nome, $email, $senha);
+            $stmt = $conexao->prepare("INSERT INTO usuarios (nome, email, senha, cargo) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $nome, $email, $senha, $cargo); // <-- Adicionado
             if ($stmt->execute()) {
                 $mensagem = "<p class='text-green-500 font-medium'>Cadastro realizado com sucesso! <a href='../../index.php' class='underline text-blue-600'>Faça login</a></p>";
             } else {
@@ -86,6 +87,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
+            <div>
+                <label for="cargo" class="block text-sm font-medium text-gray-700">Cargo</label>
+                <input type="text" id="cargo" name="cargo" placeholder="Ex: Administrador, Médico, Técnico"
+                    class="mt-1 w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required />
+            </div>
+
             <button type="submit"
                 class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 Cadastrar
@@ -106,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (input.type === "password") {
                 input.type = "text";
                 btn.textContent = "🚫";
-               
+
             } else {
                 input.type = "password";
                 btn.textContent = "👁️";
@@ -114,4 +122,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
 </body>
+
 </html>

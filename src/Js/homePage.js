@@ -10,22 +10,27 @@ const pacientesDatabase = [
 function filtrar() {
   const paciente = document.getElementById("nomePaciente").value.toLowerCase();
   const unidade = document.getElementById("unidade").value.toLowerCase();
-  
+
   const tbody = document.getElementById("tabelaResultados");
   tbody.innerHTML = "";
 
-  // Filtrar os dados
+  // Se ambos os campos estiverem vazios, mostra mensagem padrão e retorna
+  if (!paciente && !unidade) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="13" style="text-align:center; padding: 1rem;">
+          Digite para pesquisar
+        </td>
+      </tr>`;
+    return;
+  }
+
   const resultados = pacientesDatabase.filter(item => {
-    const matchPaciente = item.paciente.toLowerCase().includes(paciente);
-    const matchUnidade = item.unidade.toLowerCase().includes(unidade);
-    
-    // Se ambos os campos estão preenchidos, deve atender aos dois critérios
-    if (paciente && unidade) return matchPaciente && matchUnidade;
-    // Se apenas um campo está preenchido, retorna o que for verdadeiro
-    return matchPaciente || matchUnidade;
+    const matchPaciente = paciente ? item.paciente.toLowerCase().includes(paciente) : true;
+    const matchUnidade = unidade ? item.unidade.toLowerCase().includes(unidade) : true;
+    return matchPaciente && matchUnidade;
   });
 
-  // Exibir resultados
   if (resultados.length > 0) {
     resultados.forEach(item => {
       const row = document.createElement("tr");
@@ -50,35 +55,54 @@ function filtrar() {
     tbody.innerHTML = `
       <tr>
         <td colspan="13" style="text-align:center; padding: 1rem;">
-          ${paciente || unidade ? "Nenhum registro encontrado" : "Digite para pesquisar"}
+          Nenhum registro encontrado
         </td>
       </tr>`;
   }
 }
 
-// Função para limpar filtros
+
 function limparFiltros() {
+  // Limpar os campos de input e select
   document.querySelectorAll(".search-box input, .search-box select").forEach(el => {
     el.value = "";
-    // Disparar evento input para atualizar a tabela imediatamente
-    el.dispatchEvent(new Event('input'));
   });
+
+  // Esvaziar completamente o tbody e mostrar mensagem padrão
+  const tabela = document.getElementById("tabelaResultados");
+  if (tabela) {
+    tabela.innerHTML = `
+      <tr>
+        <td colspan="13" style="text-align:center; padding: 1rem;">
+          Digite para pesquisar
+        </td>
+      </tr>`;
+  }
 }
 
 // Adicionar event listeners para pesquisa dinâmica
-document.addEventListener('DOMContentLoaded', function() {
-  // Configurar eventos de input para ambos os campos
+document.addEventListener('DOMContentLoaded', function () {
   document.getElementById("nomePaciente").addEventListener('input', debounce(filtrar, 300));
   document.getElementById("unidade").addEventListener('input', debounce(filtrar, 300));
-  
-  // Função debounce para melhorar performance
+
   function debounce(func, wait) {
     let timeout;
-    return function() {
+    return function () {
       const context = this;
       const args = arguments;
       clearTimeout(timeout);
       timeout = setTimeout(() => func.apply(context, args), wait);
     };
+  }
+
+  // Ao carregar a página, mostra mensagem padrão na tabela
+  const tabela = document.getElementById("tabelaResultados");
+  if (tabela) {
+    tabela.innerHTML = `
+      <tr>
+        <td colspan="13" style="text-align:center; padding: 1rem;">
+          Digite para pesquisar
+        </td>
+      </tr>`;
   }
 });
