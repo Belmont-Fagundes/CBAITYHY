@@ -14,9 +14,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->get_result();
 
     if ($result && $result->num_rows === 1) {
-        $_SESSION['usuario'] = $email;
-        header("Location: ./src/pages/homePage.php");
-        exit();
+        $row = $result->fetch_assoc();
+        // Set default value for aprovado if not set
+        $aprovado = isset($row['aprovado']) ? $row['aprovado'] : 0;
+
+        if ($aprovado == 1 || $row['cargo'] == 'ADM CBA') {
+            $_SESSION['usuario'] = $email;
+            $_SESSION['cargo'] = $row['cargo'];
+            header("Location: ./src/pages/homePage.php");
+            exit();
+        } else {
+            $erro = "Seu cadastro está pendente de aprovação.";
+        }
     } else {
         $erro = "Email ou senha inválidos!";
     }
@@ -24,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -36,7 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="bg-white rounded-2xl shadow-lg flex flex-col md:flex-row w-full max-w-4xl overflow-hidden">
 
         <!-- Ilustração -->
-        <div class="hidden md:block md:w-1/2 bg-gradient-to-br from-indigo-500 to-blue-600 p-10 text-white flex flex-col justify-center">
+        <div
+            class="hidden md:block md:w-1/2 bg-gradient-to-br from-indigo-500 to-blue-600 p-10 text-white flex flex-col justify-center">
             <h1 class="text-4xl font-bold mb-4">Bem-vindo ao PACserver</h1>
             <p class="text-lg">Acesse o sistema para gerenciar seus dados de forma prática e segura.</p>
         </div>
@@ -50,48 +61,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" id="email" name="email" placeholder="usuario@exemplo.com" required
-                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400" />
-                </div>
-
-                <div>
-                    <label for="senha" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-                    <div class="relative">
-                        <input type="password" id="senha" name="senha" placeholder="********" required
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 pr-10" />
-                        <button type="button" onclick="toggleSenha()" 
-                            class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700">
-                            👁
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex items-center space-x-2">
-                    <input type="checkbox" id="lembrar" class="h-4 w-4 text-indigo-500 border-gray-300 rounded">
-                    <label for="lembrar" class="text-sm text-gray-600">Lembrar-me</label>
-                </div>
-
-                <!-- Cadastrar e Esqueceu senha lado a lado -->
-                <div class="flex items-center justify-between text-sm mt-2">
                     <div>
-                        Não tem cadastro? 
-                        <a href="./src/pages/cadastro.php" class="text-indigo-500 hover:underline">Cadastrar</a>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="email" name="email" placeholder="usuario@exemplo.com" required
+                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400" />
                     </div>
-                    <a href="./src/pages/recuperar_senha.php" class="text-indigo-500 hover:underline">
-                        Esqueceu a senha?
-                    </a>
-                </div>
 
-                <button type="submit" 
-                    class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition duration-200">
-                    Entrar
-                </button>
+                    <div>
+                        <label for="senha" class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                        <div class="relative">
+                            <input type="password" id="senha" name="senha" placeholder="********" required
+                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 pr-10" />
+                            <button type="button" onclick="toggleSenha()"
+                                class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700">
+                                👁
+                            </button>
+                        </div>
+                    </div>
 
-                <?php if ($erro): ?>
-                    <p class="text-red-500 text-sm mt-2"><?= $erro ?></p>
-                <?php endif; ?>
+                    <div class="flex items-center space-x-2">
+                        <input type="checkbox" id="lembrar" class="h-4 w-4 text-indigo-500 border-gray-300 rounded">
+                        <label for="lembrar" class="text-sm text-gray-600">Lembrar-me</label>
+                    </div>
+
+                    <!-- Cadastrar e Esqueceu senha lado a lado -->
+                    <div class="flex items-center justify-between text-sm mt-2">
+                        <div>
+                            Não tem cadastro?
+                            <a href="./src/pages/cadastro.php" class="text-indigo-500 hover:underline">Cadastrar</a>
+                        </div>
+                        <a href="./src/pages/recuperar_senha.php" class="text-indigo-500 hover:underline">
+                            Esqueceu a senha?
+                        </a>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition duration-200">
+                        Entrar
+                    </button>
+
+                    <?php if ($erro): ?>
+                        <p class="text-red-500 text-sm mt-2"><?= $erro ?></p>
+                    <?php endif; ?>
             </form>
         </section>
     </div>
@@ -104,4 +115,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 
 </body>
+
 </html>
