@@ -60,8 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="password" id="senha" name="senha" placeholder="********" required
                             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 pr-10" />
                         <button type="button" onclick="toggleSenha()" 
-                            class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700">
-                            👁
+                                                        class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700" id="btnSenha">
+                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                        </svg>
                         </button>
                     </div>
                 </div>
@@ -97,7 +100,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         function toggleSenha() {
             const senhaInput = document.getElementById("senha");
-            senhaInput.type = senhaInput.type === "password" ? "text" : "password";
+            const btn = document.getElementById("btnSenha");
+            if (senhaInput.type === "password") {
+                senhaInput.type = "text";
+                btn.textContent = "🚫";
+            } else {
+                senhaInput.type = "password";
+                btn.innerHTML = `<svg class=\"h-5 w-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M15 12a3 3 0 11-6 0 3 3 0 016 0z\" /><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z\" /></svg>`;
+            }
         }
     </script>
 
